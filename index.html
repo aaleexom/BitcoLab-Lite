@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<title>BitcoLab - Multiplicador</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="shortcut icon" type="image/png" href="images/favicon.ico"/>
+		<script src="js/jquery-3.2.1.min.js"></script>
+	</head>
+		<div class="row fixed-top mt-3 mr-3 justify-content-center justify-content-md-end">
+			<div class="col-6 col-md-2 bgBtn text-center"><span id="btcCounter">0.00050000</span> BTC</div>
+		</div>
+
+		<div class="container mt-3 text-center">
+			<div class="game pvFull">
+				<p class="pt-4 h3">Random number</p>
+				<p class="h1" id="rndNumber">00000</p>
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-6">
+						<div id="msgTrueFalse">
+							<span class="py-1 px-2">¡Apuesta a <b>Hi</b> o <b>Lo</b>!</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="mathZone">	
+					<div class="row justify-content-center mt-3">
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Bet Amount</div></div>
+						<div class="col-6 col-md-3"><input type="number" value="0.00000001" min="0" class="form-control text-center" id="betAmount"></div>
+					</div>
+					<div class="row justify-content-center mx-0 px-0">
+						<div class="col-12 col-md-6">
+							<div class="row bg-primary">
+								<div class="col-3 text-white handCursor hoverButtonPrimary" id="x2"><div class="text-white py-2">x2</div></div>
+								<div class="col-3 text-white handCursor hoverButtonPrimary" id="d2"><div class="text-white py-2">/2</div></div>
+								<div class="col-3 text-white handCursor hoverButtonPrimary" id="minCoins"><div class="text-white py-2">Min</div></div>
+								<div class="col-3 text-white handCursor hoverButtonPrimary" id="maxCoins"><div class="text-white py-2">Max</div></div>
+							</div>
+						</div>
+					</div>
+					<div class="row justify-content-center mt-3">
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Payout</div></div>
+						<div class="col-6 col-md-3"><input type="number" value="2.00" min="1" class="form-control text-center" id="payout"></div>
+					</div>
+					<div class="row justify-content-center mt-3">
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Win Profit</div></div>
+						<div class="col-6 col-md-3"><p id="winProfit" class="form-control my-0">0.00000001</p></div>
+					</div>
+					<div class="row justify-content-center mt-3 mb-3">
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Win Chance %</div></div>
+						<div class="col-6 col-md-3"><input type="number" value="47.50" min="0" class="form-control text-center" id="winChance"></div>
+					</div>
+				</div>
+
+				<p class="mb-4">Para ganar el número debe ser mayor a <b><span id="higher">5250</span></b> en Hi, y menor que <b><span id="lower">4750</span></b></p>
+
+				<div class="row justify-content-center mt-2">
+					<div class="col-6 col-md-3">
+						<div class="h5 bg-primary text-white py-2 handCursor" id="btnHi">Bet Hi</div>
+					</div>
+					<div class="col-6 col-md-3">
+						<div class="h5 bg-primary text-white py-2 handCursor" id="btnLo">Bet Lo</div>
+					</div>
+				</div>
+
+				<div id="autoRollBox" class="row justify-content-center mb-3">
+					<div class="col-12 col-md-6">
+						<div class="row justify-content-center">
+							<div class="col-12">
+								<div class="h5 bg-primary text-white py-2 my-0 handCursor" id="autoRoll">Auto Roll</div>
+							</div>
+						</div>
+						<div id="autoRollBody" class="boxChildBg">
+							<div class="row pt-3">
+								<div class="col-4">
+									<div class="bg-primary text-white py-1 handCursor mx-3" id="autoHi">Hi</div>
+								</div>
+								<div class="col-4">
+									<div class="bg-primary-selected text-white py-1 handCursor mx-3" id="autoAuto">Auto</div>
+								</div>
+								<div class="col-4">
+									<div class="bg-primary text-white py-1 handCursor mx-3" id="autoLo">Lo</div>
+								</div>
+							</div>
+							<div class="row justify-content-center pt-2 pb-3">
+								<div class="col-5">
+									<b class="form-control no-input-style textblack">Delay en ms:</b>
+								</div>
+								<div class="col-5">
+									<input type="number" value="100" class="form-control text-center" id="msDelay"/>
+								</div>
+							</div>
+								<div class="row justify-content-center my-0 py-0">
+								<div class="col-6">
+									<div class="h5 bg-primary text-white py-2 handCursor" id="start">Start</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			<div class="scrollTable mb-5 mt-2 overflowAuto">
+				<table class="table my-3">
+				  <thead class="thead-dark">
+				    <tr>
+				      <th scope="col" class="">Bet</th>
+				      <th scope="col">Roll</th>
+				      <th scope="col">Win / Lose</th>
+				      <th scope="col">Previous Amount</th>
+				      <th scope="col">Later Amount</th>
+				    </tr>
+				  </thead>
+				  <tbody id="tbody">
+				  	<!-- ... -->
+				  </tbody>
+				</table>
+			</div>
+		</div>
+
+		<script src="js/index.js"></script>
+
+ 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    	<script src="js/bootstrap.min.js"></script>
+  	</body>
+</html>
