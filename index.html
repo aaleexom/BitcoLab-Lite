@@ -8,12 +8,32 @@
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="shortcut icon" type="image/png" href="images/favicon.ico"/>
 		<script src="js/jquery-3.2.1.min.js"></script>
+		<script defer src="js/fontawesome-all.js"></script>
+		<script type="text/javascript">
+			$(window).on('scroll', function() {
+				if($(window).scrollTop()) {
+					$('#navbarId').addClass('dark-nav-bg');
+				}
+				else {
+					$('#navbarId').removeClass('dark-nav-bg');
+				}
+			})
+		</script>
 	</head>
-		<div class="row fixed-top mt-3 mr-3 justify-content-center justify-content-md-end">
-			<div class="col-6 col-md-2 bgBtn text-center"><span id="btcCounter">0.00050000</span> BTC</div>
+	<body>
+		<div class="fixed-top text-center" id="navbarId">
+		  	<div class="row pvFull">
+		  		<a class="col-4 py-2 onHoverPrimary" href="index.html">Multiplicador</a>
+		  		<a class="col-4 py-2 onHoverPrimary" href="calendar.html">Calendario</a>
+		  		<a class="col-4 py-2 onHoverPrimary" href="scripts.html">Scripts</a>
+		  	</div>
 		</div>
 
-		<div class="container mt-3 text-center">
+		<div class="row fixed-top mt-5 mr-1 justify-content-center justify-content-md-end">
+			<div class="col-6 col-md-2 bgBtn text-center"><span id="btcCounter">0.00010000</span> BTC</div>
+		</div>
+
+		<div class="container mt-5 text-center">
 			<div class="game pvFull">
 				<p class="pt-4 h3">Random number</p>
 				<p class="h1" id="rndNumber">00000</p>
@@ -25,31 +45,46 @@
 					</div>
 				</div>
 
+				<!--<div id="mathZone">	
+					<div class="row justify-content-center mt-3">
+						<div class="col-2 text-white"><div class="bg-primary text-white py-2">Bet Amount</div></div>
+						<div class="col-2 text-white"><div class="bg-primary text-white py-2">Payout</div></div>
+						<div class="col-2 text-white"><div class="bg-primary text-white py-2">Win Profit</div></div>
+						<div class="col-2 text-white"><div class="bg-primary text-white py-2">Win Chance %</div></div>
+					</div>
+					<div class="row justify-content-center mb-2">
+						<div class="col-2 py-2"><input type="number" value="0.00000001" min="0" class="form-control text-center" id="betAmount"></div>
+						<div class="col-2 py-2"><input type="number" value="2.00" min="1" class="form-control text-center" id="payout"></div>
+						<div class="col-2 py-2"><p id="winProfit" class="form-control">0.00000001</p></div>
+						<div class="col-2 py-2"><input type="number" value="47.50" min="0" class="form-control text-center" id="winChance"></div>
+					</div>
+				</div>-->
+
 				<div id="mathZone">	
 					<div class="row justify-content-center mt-3">
-						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Bet Amount</div></div>
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2 topRadius">Bet Amount</div></div>
 						<div class="col-6 col-md-3"><input type="number" value="0.00000001" min="0" class="form-control text-center" id="betAmount"></div>
 					</div>
 					<div class="row justify-content-center mx-0 px-0">
 						<div class="col-12 col-md-6">
-							<div class="row bg-primary">
-								<div class="col-3 text-white handCursor hoverButtonPrimary" id="x2"><div class="text-white py-2">x2</div></div>
+							<div class="row bg-primary remRadius">
+								<div class="col-3 text-white handCursor hoverButtonPrimary leftRadius" id="x2"><div class="text-white py-2">x2</div></div>
 								<div class="col-3 text-white handCursor hoverButtonPrimary" id="d2"><div class="text-white py-2">/2</div></div>
 								<div class="col-3 text-white handCursor hoverButtonPrimary" id="minCoins"><div class="text-white py-2">Min</div></div>
-								<div class="col-3 text-white handCursor hoverButtonPrimary" id="maxCoins"><div class="text-white py-2">Max</div></div>
+								<div class="col-3 text-white handCursor hoverButtonPrimary rightRadius" id="maxCoins"><div class="text-white py-2">Max</div></div>
 							</div>
 						</div>
 					</div>
 					<div class="row justify-content-center mt-3">
-						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Payout</div></div>
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2 remRadius">Payout</div></div>
 						<div class="col-6 col-md-3"><input type="number" value="2.00" min="1" class="form-control text-center" id="payout"></div>
 					</div>
 					<div class="row justify-content-center mt-3">
-						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Win Profit</div></div>
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2 remRadius">Win Profit</div></div>
 						<div class="col-6 col-md-3"><p id="winProfit" class="form-control my-0">0.00000001</p></div>
 					</div>
 					<div class="row justify-content-center mt-3 mb-3">
-						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2">Win Chance %</div></div>
+						<div class="col-6 col-md-3 text-white"><div class="bg-primary text-white py-2 remRadius">Win Chance %</div></div>
 						<div class="col-6 col-md-3"><input type="number" value="47.50" min="0" class="form-control text-center" id="winChance"></div>
 					</div>
 				</div>
@@ -58,48 +93,93 @@
 
 				<div class="row justify-content-center mt-2">
 					<div class="col-6 col-md-3">
-						<div class="h5 bg-primary text-white py-2 handCursor" id="btnHi">Bet Hi</div>
+						<button type="submit" class="phFull btn btn-primary py-2 px-5" id="btnHi"><h5 class="mb-0">Bet Hi</h5></button>
 					</div>
 					<div class="col-6 col-md-3">
-						<div class="h5 bg-primary text-white py-2 handCursor" id="btnLo">Bet Lo</div>
+						<button type="submit" class="phFull btn btn-primary py-2 px-5" id="btnLo"><h5 class="mb-0">Bet Lo</h5></button>
 					</div>
 				</div>
+				
+				<div class="row justify-content-center">
+					<div class="col-md-6">
+						<div id="accordion" role="tablist" class="my-2">
+						  <div class="card ">
+						    <div class="card-header bg-primary " role="tab" id="headingTwo">
+						      <h5 class="mb-0">
+						        <a class="collapsed text-white" data-toggle="collapse" href="#collapseTwo" role="button" aria-expanded="false" aria-controls="collapseTwo">
+						          Auto Roll <i class="fab fa-bitcoin"></i>
+						        </a>
+						      </h5>
+						    </div>
+						    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+						      <div class="card-body">
 
-				<div id="autoRollBox" class="row justify-content-center mb-3">
+						        <div id="autoRollBox" class="row justify-content-center mb-3">
+									<div class="col-12">
+										<div>
+											<div class="row pt-3">
+												<div class="col-4">
+													<button type="submit" class="btn bg-primary text-white py-2 px-5" id="autoHi">Hi</button>
+												</div>
+												<div class="col-4">
+													<button type="submit" class="btn bg-primary-selected text-white py-2 px-5" id="autoAuto">Auto</button>
+												</div>
+												<div class="col-4">
+													<button type="submit" class="btn bg-primary text-white py-2 px-5" id="autoLo">Lo</button>
+												</div>
+											</div>
+											<div class="row justify-content-center pt-2 pb-3">
+												<div class="col-5">
+													<p class="form-control no-input-style textblack">Delay en ms:</p>
+												</div>
+												<div class="col-5">
+													<input type="number" value="0" class="form-control" id="msDelay"/>
+												</div>
+											</div>
+												<div class="row justify-content-center my-0 py-0">
+												<div class="col-6">
+													<button type="submit" class="btn btn-primary py-3 px-5" id="start"><i class="fas fa-play fa-2x"></i></button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<!-- ESTRATEGIAS
+
+				<div id="autoRollBox" class="row justify-content-center">
 					<div class="col-12 col-md-6">
 						<div class="row justify-content-center">
 							<div class="col-12">
-								<div class="h5 bg-primary text-white py-2 my-0 handCursor" id="autoRoll">Auto Roll</div>
+								<div class="h5 bg-primary text-white py-2 my-0 handCursor" id="strategiesBox">Estrategias</div>
 							</div>
 						</div>
-						<div id="autoRollBody" class="boxChildBg">
-							<div class="row pt-3">
+						<div id="strategiesBody" class="boxChildBg py-2">
+							<div class="row justify-content-center">
 								<div class="col-4">
-									<div class="bg-primary text-white py-1 handCursor mx-3" id="autoHi">Hi</div>
+									<div class="h5 bg-primary text-white py-2 handCursor" id="str1">vsAzar</div>
 								</div>
+								<div class="col-4 py-2" id="winPercent1">0.00%</div>
+								<div class="col-4 py-2" id="variationCoins">0.00000000</div>
 								<div class="col-4">
-									<div class="bg-primary-selected text-white py-1 handCursor mx-3" id="autoAuto">Auto</div>
+									<div class="h5 bg-primary text-white py-2 handCursor" id="str2">10 Lost Searcher</div>
 								</div>
-								<div class="col-4">
-									<div class="bg-primary text-white py-1 handCursor mx-3" id="autoLo">Lo</div>
-								</div>
-							</div>
-							<div class="row justify-content-center pt-2 pb-3">
-								<div class="col-5">
-									<b class="form-control no-input-style textblack">Delay en ms:</b>
-								</div>
-								<div class="col-5">
-									<input type="number" value="100" class="form-control text-center" id="msDelay"/>
-								</div>
-							</div>
-								<div class="row justify-content-center my-0 py-0">
-								<div class="col-6">
-									<div class="h5 bg-primary text-white py-2 handCursor" id="start">Start</div>
-								</div>
+								<div class="col-4 py-2">Profit:</div>
+								<div class="col-4 py-2" id="variationCoins"><input type="number" value="1.5" min="0" class="form-control text-center" id="profitBet"></div>
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+			ESTRATEGIAS -->
 
 			<div class="scrollTable mb-5 mt-2 overflowAuto">
 				<table class="table my-3">

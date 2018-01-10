@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<title>BitcoLab - Multiplicador</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="shortcut icon" type="image/png" href="images/favicon.ico"/>
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script defer src="js/fontawesome-all.js"></script>
+		<script type="text/javascript">
+			$(window).on('scroll', function() {
+				if($(window).scrollTop()) {
+					$('#navbarId').addClass('dark-nav-bg');
+				}
+				else {
+					$('#navbarId').removeClass('dark-nav-bg');
+				}
+			})
+		</script>
+	</head>
+	<body>
+		<div class="fixed-top text-center" id="navbarId">
+		  	<div class="row pvFull">
+		  		<a class="col-4 py-2 onHoverPrimary" href="index.html">Multiplicador</a>
+		  		<a class="col-4 py-2 onHoverPrimary" href="calendar.html">Calendario</a>
+		  		<a class="col-4 py-2 onHoverPrimary" href="scripts.html">Scripts</a>
+		  	</div>
+		</div>
+
+		<div class="container mt-5 text-center">
+			
+			<div class="row justify-content-center">
+				<div class="col text-center"><h1>Scripts</h1></div>
+			</div>
+
+			<!-- COLLAPSABLE -->
+
+			<div id="accordion" role="tablist">
+
+
+			  <div class="card">
+			    <div class="card-header bg-primary" role="tab" id="headingOne">
+			      <h5 class="mb-0">
+			        <a class="collapsed text-white" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false" aria-controls="collapseOne">
+			          Freebitcoin
+			        </a>
+			      </h5>
+			    </div>
+			    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+			      <div class="card-body">
+			        
+					<h5 class="text-center">A partir de 10, 3/x2</h5>
+
+			        <div class="textarea-container">
+					  <textarea cols="150" rows="10" id="freebitcoin1">
+						/*
+						Cambiar el "valueVariation" por el número a multiplicar de máximo o mínimo que queréis perder. 
+						Ej: 0.00005000 BTC * 1.1 = 
+													0.00005500 BTC Máximo a ganar
+													0.00004500 BTC Mínimos con los que quedarte  
+							Si escribes un número mayor o igual a dos, el script podrá ejecutarse sin límites, pero cuidado, si te despistas podrías perderlo todo.
+						*/
+
+						var valueVariation = 1.2; //Variación máxima/mínima de BTC
+						var objective = 10; //Número a partir del cuál empieza a multiplicar. Recomiendo NO tocarlo.
+						var counter = 0;
+						var firstObjective = objective;
+						var starterBet = parseFloat(0.00000001).toFixed(8); //Cantidad por defecto a apostar, no recomiendo cambiarlo.
+						var actualBet = parseFloat($("#double_your_btc_stake").val()).toFixed(8);
+						var starterValue = parseFloat($("#balance").html()).toFixed(8);
+						var payout = 10; //Payout por apuesta. Pero para que la estrategia funcione bien recomiendo dejarlo en 10, sois libres de probar
+						var delay = 200; //Tiempo de espera en ms por cada tirada.
+						var betTo = "Hi"; //Se puede usar "Hi" o "Lo", en caso de usar otra cosa el script no funcionará.
+						var limit = 21; // Cantidad máxima de veces perdidas seguidas que quieres que se juegue (A partir de la número 10, cada tres turnos se multiplica por dos el amount)
+						var rndChangerActive = false; // Escribe true si quieres que cada vez que ganes se decida de forma aleatoria si apostar al otro botón, y false si quieres apostar siempre al mismo.
+						var maxValueLimit = parseFloat(starterValue * valueVariation).toFixed(8);
+						var minValueLimit = starterValue - (maxValueLimit - starterValue);
+
+						$('#double_your_btc_bet_lose').unbind();
+						$('#double_your_btc_bet_win').unbind();
+
+						function start(){
+							// MEJORAR SISTEMA $("#double_your_btc_stake").val(parseFloat(starterBet).toFixed(8))
+							$("#double_your_btc_payout_multiplier").val(payout);
+							if (parseFloat($("#balance").html()).toFixed(8) >= maxValueLimit){
+								alert("¡Has alcanzado tu meta! Desactivando script...")
+							} else if (parseFloat($("#balance").html()).toFixed(8) <= minValueLimit){
+								alert("Tu balance ha bajado hasta el límite, mejor no arriesgar. Desactivando script...");
+							} else {
+								if (betTo == "Hi"){
+									$("#double_your_btc_bet_hi_button").trigger("click");
+								} else if (betTo == "Hi") {
+									$("#double_your_btc_bet_lo_button").trigger("click");
+								} else {
+									alert("Introduce un valor de apuesta válido en el script (\"Hi\" o \"Lo\").");
+								}
+							}
+						}
+
+						function betChanger(){
+							if (betTo == "Hi"){
+								betTo = "Lo";
+							} else if (betTo == "Lo"){
+								betTo = "Hi";
+							}
+						}
+
+						function rndChanger (){
+							if (rndChangerActive == true){
+								var randomBet = Math.round(Math.random() * 2);
+								if (randomBet == 2){
+									betChanger();
+								}
+							}
+						}
+
+						$('#double_your_btc_bet_lose').bind("DOMSubtreeModified",function(e){
+						    //debugger;
+						    if( $(event.currentTarget).is(':contains("lose")') ){
+						        console.log("Has perdido");
+						        mainCounter(false);
+						    }
+						   
+						});
+
+						$('#double_your_btc_bet_win').bind("DOMSubtreeModified",function(e){
+						    //debugger;
+						    if( $(event.currentTarget).is(':contains("win")') ){
+						        console.log("Has ganado");
+						        $("#double_your_btc_stake").val(parseFloat(starterBet).toFixed(8));
+						        rndChanger();
+						        mainCounter(true);
+						    }
+						});
+
+						function mainCounter(result){
+							if (result == false){
+								counter++;
+							} else {
+								objective = firstObjective;
+								counter = 0;
+							}
+							console.log("Perdidas consecutivas: " + counter);
+							if (counter >= limit){
+								alert("No se recomienda seguir apostando, el juego se ha detenido.");
+							} else {
+								if (counter == objective){
+									objective = objective + 3;
+									actualBet = parseFloat($("#double_your_btc_stake").val()).toFixed(8);
+									$("#double_your_btc_stake").val(parseFloat(actualBet * 2).toFixed(8));
+									setTimeout(start, delay);
+								} else if (counter > objective){
+									setTimeout(start, delay);
+								} else {
+									setTimeout(start, delay);
+								}
+							}
+						}
+
+						start();
+					  </textarea>
+					  <button class="nobtnclass" id="copyFreebitcoin1">
+					  	<a href="#" data-toggle="popover" data-trigger="hover" data-content="Copiar"><i class="fas fa-clipboard fa-2x"></i></a>
+					  </button>
+					</div>
+
+			      </div>
+			    </div>
+			  </div>
+
+
+			  <div class="card">
+			    <div class="card-header bg-primary" role="tab" id="headingTwo">
+			      <h5 class="mb-0">
+			        <a class="collapsed text-white" data-toggle="collapse" href="#collapseTwo" role="button" aria-expanded="false" aria-controls="collapseTwo">
+			          Bitsler
+			        </a>
+			      </h5>
+			    </div>
+			    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+			      <div class="card-body">
+
+					<h5 class="text-center">Buscador de bloques</h5>
+
+			        <div class="textarea-container">
+					  <textarea cols="150" rows="10" id="bitsler1">
+						//Win or Lose detect
+						//Class: result-bet-win result-bet-lose
+						var result = true;
+						var preventMessageShowed = false;
+						var defaultBet = parseFloat(0.00000001).toFixed(8); //Apuesta básica/inicial
+						var counter = 0; //Contar de veces ganadas
+						var highCounter = 0; //Contador de veces que se ha llegado al bloque de veces ganadas. Ej: Si ganas 10 veces, se suma 1
+						var countObjective = 10; //Objetivo de veces seguidas ganadas para sumar un bloque
+						var highCountObjective = 4; //Objetivo de bloques a ganar para detener el script
+						var randomMs = Math.round(Math.random() * 250);
+						var delay = parseInt(500 + randomMs);
+						var randomChangeTo = Math.round(Math.random() * 2);
+						var changeToBet = parseInt(4 + randomChangeTo); //Amount of Bet to High or to Low
+						var changeCounter = changeToBet;
+						var scriptActivated = false;
+						var defaultBlock = 100;
+						var defaultBlockPercent = "100%";
+						var defaultObjective = 3.33;
+						var defaultLoss = 100 / (countObjective * highCountObjective);
+						var totalLoss = 0;
+						var minLoss = 3; //Tiene que perder como mínimo tres veces para que cuente como que la máquina de verdad se ha calmado, si no vuelve a empezar
+						var sound01 = new Audio('https://aaleexom.github.io/sounds/popupsound.wav');
+						var activeSearchRed = false;
+
+						//Default settings
+						var setCountObjective = 10;
+						var setHighCountObjective = 4;
+						var setMinLoss = 3;
+						var setDefaultBet = parseFloat(0.00000001).toFixed(8);
+						var setActiveSearchRed = false;
+
+						var calculator = '<hr><div class=\"panel container-fluid\" id=\"deposit-withdraw-buttons-lg\"><div class=\"panel-body\" style=\"padding-top:0px;\"><div class=\"row justify-content-center\"><div class=\"col text-center pad-top text-thin\">ANGRY LEVEL</div><div class=\"col pad-top mar-hor\"><div class=\"progress mar-no\" id=\"progress\"><div class=\"progress-bar\" id=\"progressbar\" role=\"progressbar\" style=\"width: 0%;\" aria-valuenow=\"0\" aria-valuemin=\"0\" aria-valuemax=\"100\">0%</div></div></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-smile-o fa-lg text-success\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-meh-o fa-lg text-warning\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-frown-o fa-lg text-danger\"></i></div><div id=\"startScriptBtn\" class=\"col-12 pad-btm tab-pane fade active in\"><button id=\"startScript\" class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:70%;\" data-loading-text=\"<i class=\'fa fa-refresh fa-spin\'></i> Rolling...\" type=\"button\">START</button><button id=\"engine\"  class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:25%; height: 100%;\" type=\"button\"><i class=\"fa fa-cog fa-lg\"></i></button><div class=\"modal fade\" id=\"winModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Alerta</h4></div><div class=\"modal-body text-center\"><p>Bitslern se ha calmado<br>¡Puedes apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div class=\"modal fade\" id=\"rememberModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Atención</h4></div><div class=\"modal-body text-center\"><p>¡Recuerda cambiar el Payout antes de empezar a apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div id=\"engineModal\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Configuración</h4></div><div class=\"modal-body\"><form class=\"form-horizontal\"><div class=\"form-group\"><label class=\"control-label col-sm-4\">Victorias por bloque:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"winsPerBlock\" value=\"10\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Objetivo de bloques:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"blocks\" value=\"4\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Veces perdidas mínimas:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0\" class=\"form-control\" id=\"minimumLose\" value=\"3\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Apuesta por defecto:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0.00000001\" step=\"0.00000001\" class=\"form-control\" id=\"starterBet\" value=\"0.00000001\"></div></div><div class=\"form-group\"><div class=\"col-sm-offset-4 col-sm-6\"><div class=\"checkbox\"><label><input type=\"checkbox\" id=\"checkStateBox\"> Buscar un solo <b>Lose</b></label></div></div></div></form></div><div class=\"modal-footer\"><button id=\"unsaveSettings\" type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cerrar</button><button type=\"button\" class=\"btn btn-primary\" id=\"saveChanges\">Guardar cambios</button></div></div></div></div></div></div><div class=\"clear\"></div></div></div>';
+
+						$("#btn-bet-stop-pilot-dice").after(calculator);
+
+						$("#amount").val(parseFloat(0.00000001).toFixed(8));
+
+						//$("#history-my-bets-dice li:first span:last-child").attr('id', 'resultSelector');
+
+
+						//Balance 			$('.balance-btc-html').text().substr(0,10)
+
+						$('#history-my-bets-dice').unbind();
+						$('.balance-btc-html').bind("DOMSubtreeModified",function(e){
+							setTimeout(resultFuncSelector, 100);
+						});
+
+						$("#btn-bet-dice").click(function (){
+							if (scriptActivated == true){
+								if (activeSearchRed == false){
+									if (changeCounter > 0){
+										randomMs = Math.round(Math.random() * 250);
+										delay = parseInt(500 + randomMs);
+										changeCounter--;
+										countFunc();
+									} else if (changeCounter <= 0){
+										changeBetFunc();
+									}
+								} else if (activeSearchRed == true){
+									randomMs = Math.round(Math.random() * 250);
+									delay = parseInt(500 + randomMs);
+									redSearch();
+								}
+							} else {
+								$("#startScript").text("START");
+								setMinProgress();
+								counter = 0;
+								highCounter = 0;
+							}
+						});
+
+
+						function resultFuncSelector(){
+							if ($("#resultSelector").length != 0) {	
+								$("#resultSelector").removeAttr("id");
+							}
+							$("#history-my-bets-dice li:first span:last-child").attr('id', 'resultSelector');
+
+						    if ($("#resultSelector").hasClass("c-green")){
+						    	result = true;
+						    }
+						    else if ($("#resultSelector").hasClass("c-red")){
+						    	result = false;
+						    }
+						}
+
+
+						function roll(){
+							$("#btn-bet-dice").trigger("click");
+						}
+
+						function countFunc(){
+							console.log(result);
+							if (result == true){
+								counter++;
+								var progress = parseFloat($("#progress").css("width"));
+								var progressbar = parseFloat($("#progressbar").css("width"));
+								var actualPercent = parseFloat((progressbar / progress) * 100);
+								var laterPercent = parseFloat(actualPercent - defaultLoss);
+								var laterPercentInt = parseInt(Math.round(laterPercent));
+								var valuePercent = laterPercentInt + "%";
+								$("#progressbar").css("width", valuePercent);
+								$("#progressbar").attr('aria-valuenow', laterPercentInt);
+								$("#progressbar").text(laterPercentInt + "%");
+							}
+							else if (result == false) {
+								counter = 0;
+								totalLoss++;
+								if (highCounter > 0){
+									calcProgress(defaultBlock, defaultBlockPercent);
+								} else if (highCounter == 0) {
+									setMaxProgress();
+								}
+							}
+
+							if (counter >= countObjective){
+								highCounter++;
+								counter = 0;
+								//Valor inicial por bloque. Ej: 3 bloques en total, si va por el bloque 2 y tiene 0 en counter, defaultValue = 33%... (2bloques/3bloques * 100) 
+							}
+
+							defaultBlock = parseFloat(100 - ((highCounter/ highCountObjective) * 100));
+							defaultBlockPercent = parseInt(Math.round(defaultBlock)) + "%";
+							
+							if (highCounter >= highCountObjective){
+								if (totalLoss > minLoss){
+									if (result == false){
+									sound01.play();
+									setTimeout(youWin, delay);
+									} else if (result == true){
+										activeSearchRed = true;
+										setMinProgress();
+										redSearch();
+									}
+								} else {
+									switchState();
+									$("#startScript").trigger("click");
+								}
+							}
+							else {
+								setTimeout(roll, delay);
+							}
+							console.log("Counter: " + counter + "\nHigh Counter: " + highCounter);
+						}
+
+						function redSearch(){
+							if (result == true){
+								setTimeout(roll, delay);
+							} else {
+								switchState();
+								sound01.play();
+								setTimeout(youWin, delay);
+							}
+
+						}
+
+						function youWin(){
+							$('#winModal').modal('show');
+						}
+
+						function changeBetFunc(){
+							$("#condition-html").trigger("click");
+							randomChangeTo = Math.round(Math.random() * 2);
+							changeToBet = parseInt(4 + randomChangeTo);
+							changeCounter = changeToBet;
+							setTimeout(roll, delay);
+						}
+
+
+						function switchState(){
+							if (scriptActivated == true){
+								scriptActivated = false;
+								$("#startScript").text("START");
+								setMinProgress();
+								counter = 0;
+								highCounter = 0;
+								activeSearchRed = false;
+							} else if (scriptActivated == false) {
+								scriptActivated = true;
+								settingsSave();
+								$("#amount").val(parseFloat(defaultBet).toFixed(8));
+								defaultLoss = parseFloat(100 / (countObjective * highCountObjective));
+								$("#startScript").text("STOP");
+								setMaxProgress();
+								setTimeout(roll, delay);
+							}
+						}
+
+						/* Get and set percent
+
+						$("#btn-bet-dice").click(function(){
+								var progress = parseInt($("#progress").css("width"));
+								var progressbar = parseInt($("#progressbar").css("width"));
+								var actualPercent = parseInt(Math.round((progressbar / progress) * 100));
+								var laterPercent = parseInt(actualPercent - 5);
+								var valuePercent = laterPercent + "%";
+								$("#progressbar").css("width", valuePercent);
+								$("#progressbar").attr('aria-valuenow', laterPercent);
+								$("#progressbar").text(laterPercent + "%");
+							});
+
+						*/
+
+						function setMinProgress(){
+							$("#progressbar").css("width", "0%");
+							$("#progressbar").attr('aria-valuenow', 0);
+							$("#progressbar").text(0 + "%");
+						}
+
+						function setMaxProgress(){
+							$("#progressbar").css("width", "100%");
+							$("#progressbar").attr('aria-valuenow', 100);
+							$("#progressbar").text(100 + "%");
+						}
+
+						function calcProgress(cleanValue, percentValue){
+							cleanValueFix = parseInt(Math.round(cleanValue));
+							$("#progressbar").css("width", percentValue);
+							$("#progressbar").attr('aria-valuenow', cleanValueFix);
+							$("#progressbar").text(cleanValueFix + "%");
+						}
+
+						$("#startScript").click(function(){
+							var payoutValue = parseFloat($("#payout").val()).toFixed(2);
+							$('#bets-history ul li:first-child a').tab('show');
+
+							if (payoutValue == parseFloat(2.00).toFixed(2)){
+								if (preventMessageShowed == false){
+									preventMessageShowed = true;
+									$('#rememberModal').modal('show');
+								}
+								else {
+									switchState();
+								}
+							}
+							else {
+								switchState();
+							}
+						});
+
+						function settingsSave(){
+							countObjective = parseInt($("#winsPerBlock").val());
+							highCountObjective = parseInt($("#blocks").val());
+							minLoss = parseInt($("#minimumLose").val());
+							defaultBet = parseFloat($("#starterBet").val()).toFixed(8);
+							activeSearchRed = $("#checkStateBox").is(':checked');
+						}
+
+						function settingsUnsave(){
+							setCountObjective = parseInt($("#winsPerBlock").val());
+							setHighCountObjective =parseInt($("#blocks").val());
+							setMinLoss = parseInt($("#minimumLose").val());
+							setDefaultBet = parseFloat($("#starterBet").val()).toFixed(8);
+							setActiveSearchRed = $("#checkStateBox").is(':checked');
+						}
+
+						$("#engine").click(function(){
+							settingsUnsave();
+							$('#engineModal').modal('show');
+						});
+
+						$("#saveChanges").click(function(){
+							settingsSave();
+							$("#engineModal").modal('hide');
+						});
+
+						$("#unsaveSettings").click(function(){
+							$("#winsPerBlock").val(parseInt(setCountObjective));
+							$("#blocks").val(parseInt(setHighCountObjective));
+							$("#minimumLose").val(parseInt(setMinLoss));
+							$("#starterBet").val(parseFloat(setDefaultBet).toFixed(8));
+							$("#checkStateBox").prop('checked', setActiveSearchRed);
+							countObjective = setCountObjective;
+							highCountObjective = setHighCountObjective;
+							minLoss = setMinLoss;
+							defaultBet = setDefaultBet;
+							activeSearchRed = setActiveSearchRed;
+						});
+
+						$("#starterBet").on('input', setDecimals);
+
+						function setDecimals(){
+							$("#starterBet").val(parseFloat($("#starterBet").val()).toFixed(8));
+						}
+					  </textarea>
+					  <button class="nobtnclass" id="copyBitsler1">
+					  	<a href="#" data-toggle="popover" data-trigger="hover" data-content="Copiar"><i class="fas fa-clipboard fa-2x"></i></a>
+					  </button>
+					</div>
+
+
+			      </div>
+			    </div>
+			  </div>
+
+
+			</div>
+			
+			<!-- COLLAPSABLE -->
+
+		</div>
+
+		<script src="js/script.js"></script>
+
+ 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    	<script src="js/bootstrap.min.js"></script>
+  	</body>
+</html>

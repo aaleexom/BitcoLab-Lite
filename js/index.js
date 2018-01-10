@@ -50,6 +50,13 @@ var exceededAmount = 0;
 var maxWin;
 var maxLose;
 
+var trueOrFalse = true;
+
+var profit = parseFloat($("#profitBet").val()).toFixed(2);
+var starterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
+var maxObjective = parseFloat(starterAmount * profit).toFixed(8);
+var minObjective = parseFloat(starterAmount - (maxObjective - starterAmount)).toFixed(8);
+
 function rndBet(){
 	var randomBet = Math.floor(Math.random() * (1 + 1));
 	var rndBetResult = "Hi";
@@ -90,7 +97,7 @@ function roll(){
 	var localLastBet = lastBet;
 	var localResultCounter = resultCounter;
 	var x = Math.floor(Math.random() * 10000);
-	var trueOrFalse = true;
+	trueOrFalse = true;
 	if (betTo) {
 		if (betTo == "Hi") {
 			var betVar = "Hi";
@@ -140,16 +147,20 @@ function roll(){
 	if (trueOrFalse == true) {
 		$("#btcCounter").text(addCoins);
 		afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-		$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center\">" + betCount + "</span>");
+		$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder leftRadius\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center rightRadius\">" + betCount + "</span>");
 		var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-success\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 	}
 	else {
 		$("#btcCounter").text(removeCoins);
 		afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-		$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center\">" + betCount + "</span>");
+		$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder leftRadius\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center rightRadius\">" + betCount + "</span>");
 		var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-danger\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 	}
 	$("#tbody").prepend(text);
+	if (parseInt($("#tbody tr").length) > 500){
+		$("#tbody tr:nth-last-child(-n+400)").remove();
+	}
+	console.log(parseInt($("#tbody tr").length));
 }
 
 function autoRoll(){
@@ -258,6 +269,89 @@ function autoRollSTR1(){
 	}
 }
 
+function autoRollSTR2(){
+
+	if (betCount < 2){
+		var pocketBTC = $("#btcCounter").text();
+		var pocketBTCFix = parseFloat(pocketBTC).toFixed(8);
+		var betAmountCounter = $("#betAmount").val();
+		var betAmountCounterFix = parseFloat(betAmountCounter);
+
+		if ((pocketBTCFix > 0.00000000) && (pocketBTCFix >= betAmountCounterFix)){
+			var delay = $("#msDelay").val();
+
+			if (startedAutoRoll == true){
+				roll();
+				setTimeout(autoRollSTR2, delay);
+			}
+		}
+		else {
+			$("#msgTrueFalse").html("<p class=\"py-1\">No tienes suficiente dinero en el monedero.</p>");
+			switchAuto();
+		}
+	} else if(betCount >= 2) {
+		if (trueOrFalse == false) {
+			//alert("Objetivo encontrado");
+			max();
+			var actualToBet = $("#betAmount").val();
+			actualToBet = actualToBet / 2;
+			$("#betAmount").val(parseFloat(actualToBet).toFixed(8));
+			var pocketBTC = $("#btcCounter").text();
+			var pocketBTCFix = parseFloat(pocketBTC).toFixed(8);
+			var betAmountCounter = $("#betAmount").val();
+			var betAmountCounterFix = parseFloat(betAmountCounter);
+
+			if ((pocketBTCFix > 0.00000000) && (pocketBTCFix >= betAmountCounterFix)){
+				var delay = $("#msDelay").val();
+
+				if (startedAutoRoll == true){
+					roll();
+				}
+			}
+			else {
+				$("#msgTrueFalse").html("<p class=\"py-1\">No tienes suficiente dinero en el monedero.</p>");
+				switchAuto();
+			}
+			setTimeout(returnAutoRollSTR2, delay);
+		}
+		else {
+			var pocketBTC = $("#btcCounter").text();
+			var pocketBTCFix = parseFloat(pocketBTC).toFixed(8);
+			var betAmountCounter = $("#betAmount").val();
+			var betAmountCounterFix = parseFloat(betAmountCounter);
+
+			if ((pocketBTCFix > 0.00000000) && (pocketBTCFix >= betAmountCounterFix)){
+				var delay = $("#msDelay").val();
+
+				if (startedAutoRoll == true){
+					roll();
+					setTimeout(autoRollSTR2, delay);
+				}
+			}
+			else {
+				$("#msgTrueFalse").html("<p class=\"py-1\">No tienes suficiente dinero en el monedero.</p>");
+				switchAuto();
+			}
+		}
+	}
+}
+
+function returnAutoRollSTR2(){
+	var actualBTCAmount = parseFloat($("#btcCounter").text()).toFixed(8);
+	betTo = "Hi";
+	$("#msDelay").val(parseInt(0));
+	changePayout(1.06);
+	min();
+	if (actualBTCAmount <= minObjective){
+		alert("Has llegado al límite de pérdidas.\nDeteniendo el script...");
+	}
+	else if (actualBTCAmount >= maxObjective){
+		alert ("¡Enhorabuena, has logrado tu meta!\nDeteniendo el script...");
+	} else {
+		autoRollSTR2();
+	}
+}
+
 
 function addCoins(){
 	var actualBTC = $("#btcCounter").text();
@@ -284,11 +378,11 @@ function removeCoins(){
 function switchAuto(){
 	if (startedAutoRoll == false){
 		startedAutoRoll = true;
-		$("#start").text("Stop");
+		$("#start").html("<i class=\"fas fa-pause fa-2x\">");
 	}
 	else {
 		startedAutoRoll = false;
-		$("#start").text("Start");
+		$("#start").html("<i class=\"fas fa-play fa-2x\">");
 		perdidasNecesarias = 0;
 	}
 	return startedAutoRoll;
@@ -385,6 +479,37 @@ function max(){
 	$("#winProfit").text(winProfitValueFix);
 }
 
+function changePayout(payout){
+	var payVal = parseFloat(payout).toFixed(2);
+	$("#payout").val(parseFloat(payVal).toFixed(2));
+	payoutValue = $("#payout").val();
+	payoutValueFix = parseFloat(payoutValue).toFixed(2);
+
+	if (payoutValueFix > 4750){
+		payoutValueFix = parseFloat(4750).toFixed(2);
+	}
+	else if(payoutValueFix < 1){
+		payoutValueFix = parseFloat(1).toFixed(2);
+	}
+	$("#payout").val(payoutValueFix);
+
+	betAmountValue = $("#betAmount").val();
+
+	winChanceValue = maxWinChance / payoutValueFix;
+	winChanceValueFix = parseFloat(winChanceValue).toFixed(2);
+	$("#winChance").val(winChanceValueFix);
+
+	winProfitValue = (betAmountValue * payoutValueFix) - betAmountValue;
+	winProfitValueFix = parseFloat(winProfitValue).toFixed(8);
+	$("#winProfit").text(winProfitValueFix);
+
+	lower = maxRollNumbers * (winChanceValueFix/100);
+	lowerFix = parseInt(lower);
+	$("#lower").text(lowerFix);
+	higher = maxRollNumbers - lower;
+	higherFix = parseInt(higher);
+	$("#higher").text(higherFix);
+}
 
 
 
@@ -404,7 +529,7 @@ $(document).ready(function(){
 			var localLastBet = lastBet;
 			var localResultCounter = resultCounter;
 			var x = Math.floor(Math.random() * 10000);
-			var trueOrFalse = true;
+			trueOrFalse = true;
 			lastBet = "Hi";
 			var betVar = "Hi";
 			trueOrFalse = checkHi(x);
@@ -435,13 +560,13 @@ $(document).ready(function(){
 			if (trueOrFalse == true) {
 				$("#btcCounter").text(addCoins);
 				afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center\">" + betCount + "</span>");
+				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder leftRadius\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center rightRadius\">" + betCount + "</span>");
 				var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-success\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 			}
 			else {
 				$("#btcCounter").text(removeCoins);
 				afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center\">" + betCount + "</span>");
+				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder leftRadius\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center rightRadius\">" + betCount + "</span>");
 				var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-danger\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 			}
 			$("#tbody").prepend(text);
@@ -461,7 +586,7 @@ $(document).ready(function(){
 			var localLastBet = lastBet;
 			var localResultCounter = resultCounter;
 			var x = Math.floor(Math.random() * 10000);
-			var trueOrFalse = true;
+			trueOrFalse = true;
 			lastBet = "Lo";
 			var betVar = "Lo";
 			trueOrFalse = checkLo(x);
@@ -492,13 +617,13 @@ $(document).ready(function(){
 			if (trueOrFalse == true) {
 				$("#btcCounter").text(addCoins);
 				afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center\">" + betCount + "</span>");
+				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-success bgSuccessBorder leftRadius\">¡Has ganado!</span><span class=\"px-3 py-1 bgSuccessBorder text-center rightRadius\">" + betCount + "</span>");
 				var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-success\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 			}
 			else {
 				$("#btcCounter").text(removeCoins);
 				afterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
-				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center\">" + betCount + "</span>");
+				$("#msgTrueFalse").html("<span class=\"py-1 px-5 bg-danger bgDangerBorder leftRadius\">Has perdido...</span><span class=\"px-3 py-1 bgDangerBorder text-center rightRadius\">" + betCount + "</span>");
 				var text = "<tr><td scope=\"row\" class=\"bg-dark text-white\" id=\"bet\">" + betVar + "</td><td class=\"roll\">" + x + "</td><td class=\"winLose\"><b class=\"text-danger\">" + plusMinus + winLoseAmount + "</b></td><td class=\"previousAmount\">" + prevAmount + "</td><td class=\"laterAmount\">" + afterAmount + "</td></tr>";
 			}
 			$("#tbody").prepend(text);
@@ -659,5 +784,14 @@ $(document).ready(function(){
 		maxLose = parseFloat(starterCoins * 0.7).toFixed(8);
 		switchAuto();
 		autoRollSTR1();
+	});
+
+	$("#str2").click(function(){
+		profit = parseFloat($("#profitBet").val()).toFixed(2);
+		starterAmount = parseFloat($("#btcCounter").text()).toFixed(8);
+		maxObjective = parseFloat(starterAmount * profit).toFixed(8);
+		minObjective = parseFloat(starterAmount - (maxObjective - starterAmount)).toFixed(8);
+		switchAuto();
+		returnAutoRollSTR2();
 	});
 });
