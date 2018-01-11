@@ -194,9 +194,10 @@
 						var counter = 0; //Contar de veces ganadas
 						var highCounter = 0; //Contador de veces que se ha llegado al bloque de veces ganadas. Ej: Si ganas 10 veces, se suma 1
 						var countObjective = 10; //Objetivo de veces seguidas ganadas para sumar un bloque
+						var winIfOnCountObjective = true;
 						var highCountObjective = 4; //Objetivo de bloques a ganar para detener el script
 						var randomMs = Math.round(Math.random() * 250);
-						var delay = parseInt(500 + randomMs);
+						var delay = parseInt(randomMs);
 						var randomChangeTo = Math.round(Math.random() * 2);
 						var changeToBet = parseInt(4 + randomChangeTo); //Amount of Bet to High or to Low
 						var changeCounter = changeToBet;
@@ -209,6 +210,7 @@
 						var minLoss = 3; //Tiene que perder como mínimo tres veces para que cuente como que la máquina de verdad se ha calmado, si no vuelve a empezar
 						var sound01 = new Audio('https://aaleexom.github.io/sounds/popupsound.wav');
 						var activeSearchRed = false;
+						var activeSearchGreen = false;
 
 						//Default settings
 						var setCountObjective = 10;
@@ -216,8 +218,11 @@
 						var setMinLoss = 3;
 						var setDefaultBet = parseFloat(0.00000001).toFixed(8);
 						var setActiveSearchRed = false;
+						var setActiveSearchGreen = false;
 
-						var calculator = '<hr><div class=\"panel container-fluid\" id=\"deposit-withdraw-buttons-lg\"><div class=\"panel-body\" style=\"padding-top:0px;\"><div class=\"row justify-content-center\"><div class=\"col text-center pad-top text-thin\">ANGRY LEVEL</div><div class=\"col pad-top mar-hor\"><div class=\"progress mar-no\" id=\"progress\"><div class=\"progress-bar\" id=\"progressbar\" role=\"progressbar\" style=\"width: 0%;\" aria-valuenow=\"0\" aria-valuemin=\"0\" aria-valuemax=\"100\">0%</div></div></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-smile-o fa-lg text-success\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-meh-o fa-lg text-warning\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-frown-o fa-lg text-danger\"></i></div><div id=\"startScriptBtn\" class=\"col-12 pad-btm tab-pane fade active in\"><button id=\"startScript\" class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:70%;\" data-loading-text=\"<i class=\'fa fa-refresh fa-spin\'></i> Rolling...\" type=\"button\">START</button><button id=\"engine\"  class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:25%; height: 100%;\" type=\"button\"><i class=\"fa fa-cog fa-lg\"></i></button><div class=\"modal fade\" id=\"winModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Alerta</h4></div><div class=\"modal-body text-center\"><p>Bitslern se ha calmado<br>¡Puedes apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div class=\"modal fade\" id=\"rememberModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Atención</h4></div><div class=\"modal-body text-center\"><p>¡Recuerda cambiar el Payout antes de empezar a apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div id=\"engineModal\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Configuración</h4></div><div class=\"modal-body\"><form class=\"form-horizontal\"><div class=\"form-group\"><label class=\"control-label col-sm-4\">Victorias por bloque:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"winsPerBlock\" value=\"10\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Objetivo de bloques:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"blocks\" value=\"4\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Veces perdidas mínimas:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0\" class=\"form-control\" id=\"minimumLose\" value=\"3\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Apuesta por defecto:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0.00000001\" step=\"0.00000001\" class=\"form-control\" id=\"starterBet\" value=\"0.00000001\"></div></div><div class=\"form-group\"><div class=\"col-sm-offset-4 col-sm-6\"><div class=\"checkbox\"><label><input type=\"checkbox\" id=\"checkStateBox\"> Buscar un solo <b>Lose</b></label></div></div></div></form></div><div class=\"modal-footer\"><button id=\"unsaveSettings\" type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cerrar</button><button type=\"button\" class=\"btn btn-primary\" id=\"saveChanges\">Guardar cambios</button></div></div></div></div></div></div><div class=\"clear\"></div></div></div>';
+						var calculator = '<hr><div class=\"panel container-fluid\" id=\"deposit-withdraw-buttons-lg\"><div class=\"panel-body\" style=\"padding-top:0px;\"><div class=\"row justify-content-center\"><div class=\"col text-center pad-top text-thin\">ANGRY LEVEL</div><div class=\"col pad-top mar-hor\"><div class=\"progress mar-no\" id=\"progress\"><div class=\"progress-bar\" id=\"progressbar\" role=\"progressbar\" style=\"width: 0%;\" aria-valuenow=\"0\" aria-valuemin=\"0\" aria-valuemax=\"100\">0%</div></div></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-smile-o fa-lg text-success\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-meh-o fa-lg text-warning\"></i></div><div class=\"col-sm-4 text-center pad-btm mar-no\"><i class=\"fa fa-frown-o fa-lg text-danger\"></i></div><div id=\"startScriptBtn\" class=\"col-12 pad-btm tab-pane fade active in\"><button id=\"startScript\" class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:70%;\" data-loading-text=\"<i class=\'fa fa-refresh fa-spin\'></i> Rolling...\" type=\"button\">START</button><button id=\"engine\"  class=\"btn btn-lg btn-info\" style=\"border-bottom: 3px solid rgba(70,97,113,0.2); width:25%; height: 100%;\" type=\"button\"><i class=\"fa fa-cog fa-lg\"></i></button><div class=\"modal fade\" id=\"winModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Alerta</h4></div><div class=\"modal-body text-center\"><p>Bitslern se ha calmado<br>¡Puedes apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div class=\"modal fade\" id=\"rememberModal\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Atención</h4></div><div class=\"modal-body text-center\"><p>¡Recuerda cambiar el Payout antes de empezar a apostar!</p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Cerrar</button></div></div></div></div><div id=\"engineModal\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button><h4 class=\"modal-title text-center\">Configuración</h4></div><div class=\"modal-body\"><form class=\"form-horizontal\"><div class=\"form-group text-center\"><label id="winOrLoseChoseLabel" class=\"control-label col\">Buscador de victorias por bloque</label><button id=\"switcher\" style=\"border:none; background-color: transparent;\"><i class="fa fa-exchange" aria-hidden="true" style="color:#696a6e;"></i></button></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Victorias por bloque:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"winsPerBlock\" value=\"10\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Objetivo de bloques:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"1\" class=\"form-control\" id=\"blocks\" value=\"4\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Veces perdidas mínimas:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0\" class=\"form-control\" id=\"minimumLose\" value=\"3\"></div></div><div class=\"form-group\"><label class=\"control-label col-sm-4\">Apuesta por defecto:</label><div class=\"col-sm-6\"><input type=\"number\" min=\"0.00000001\" step=\"0.00000001\" class=\"form-control\" id=\"starterBet\" value=\"0.00000001\"></div></div><div class=\"form-group\"><div class=\"col-sm-offset-4 col-sm-6\"><div class=\"checkbox\"><label><input type=\"checkbox\" id=\"checkOneLose\"> Buscar un solo <b>Lose</b></label><label><input type=\"checkbox\" id=\"checkOneWin\"> Buscar un solo <b>Win</b></label></div></div></div></form></div><div class=\"modal-footer\"><button id=\"unsaveSettings\" type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cerrar</button><button type=\"button\" class=\"btn btn-primary\" id=\"saveChanges\">Guardar cambios</button></div></div></div></div></div></div><div class=\"clear\"></div></div></div>';
+
+						sound01.volume = 0.35;
 
 						$("#btn-bet-stop-pilot-dice").after(calculator);
 
@@ -233,12 +238,12 @@
 							setTimeout(resultFuncSelector, 100);
 						});
 
-						$("#btn-bet-dice").click(function (){
+						function btnBetDice (){
 							if (scriptActivated == true){
-								if (activeSearchRed == false){
+								if (activeSearchRed == false && activeSearchGreen == false){
 									if (changeCounter > 0){
 										randomMs = Math.round(Math.random() * 250);
-										delay = parseInt(500 + randomMs);
+										delay = parseInt(randomMs);
 										changeCounter--;
 										countFunc();
 									} else if (changeCounter <= 0){
@@ -246,8 +251,12 @@
 									}
 								} else if (activeSearchRed == true){
 									randomMs = Math.round(Math.random() * 250);
-									delay = parseInt(500 + randomMs);
+									delay = parseInt(randomMs);
 									redSearch();
+								} else if (activeSearchGreen == true){
+									randomMs = Math.round(Math.random() * 250);
+									delay = parseInt(randomMs);
+									greenSearch();
 								}
 							} else {
 								$("#startScript").text("START");
@@ -255,10 +264,11 @@
 								counter = 0;
 								highCounter = 0;
 							}
-						});
+						}
 
 
 						function resultFuncSelector(){
+							console.log("result Function");
 							if ($("#resultSelector").length != 0) {	
 								$("#resultSelector").removeAttr("id");
 							}
@@ -266,20 +276,23 @@
 
 						    if ($("#resultSelector").hasClass("c-green")){
 						    	result = true;
+								console.log("Has ganado");
 						    }
 						    else if ($("#resultSelector").hasClass("c-red")){
 						    	result = false;
+								console.log("Has perdido");
 						    }
 						}
 
 
 						function roll(){
 							$("#btn-bet-dice").trigger("click");
+							setTimeout(btnBetDice, parseInt(600 + randomMs));
 						}
 
 						function countFunc(){
 							console.log(result);
-							if (result == true){
+							if (result == winIfOnCountObjective){
 								counter++;
 								var progress = parseFloat($("#progress").css("width"));
 								var progressbar = parseFloat($("#progressbar").css("width"));
@@ -291,7 +304,7 @@
 								$("#progressbar").attr('aria-valuenow', laterPercentInt);
 								$("#progressbar").text(laterPercentInt + "%");
 							}
-							else if (result == false) {
+							else if (result != winIfOnCountObjective) {
 								counter = 0;
 								totalLoss++;
 								if (highCounter > 0){
@@ -312,10 +325,10 @@
 							
 							if (highCounter >= highCountObjective){
 								if (totalLoss > minLoss){
-									if (result == false){
+									if (result != winIfOnCountObjective){
 									sound01.play();
 									setTimeout(youWin, delay);
-									} else if (result == true){
+									} else if (result == winIfOnCountObjective){
 										activeSearchRed = true;
 										setMinProgress();
 										redSearch();
@@ -332,12 +345,43 @@
 						}
 
 						function redSearch(){
-							if (result == true){
-								setTimeout(roll, delay);
+							if (winIfOnCountObjective == true){
+								if (result == winIfOnCountObjective){
+									setTimeout(roll, delay);
+								} else {
+									switchState();
+									sound01.play();
+									setTimeout(youWin, delay);
+								}
 							} else {
-								switchState();
-								sound01.play();
-								setTimeout(youWin, delay);
+								if (result == winIfOnCountObjective){
+									switchState();
+									sound01.play();
+									setTimeout(youWin, delay);
+								} else {
+									setTimeout(roll, delay);
+								}
+							}
+
+						}
+
+						function greenSearch(){
+							if (winIfOnCountObjective == true){
+								if (result == winIfOnCountObjective){
+									switchState();
+									sound01.play();
+									setTimeout(youWin, delay);
+								} else {
+									setTimeout(roll, delay);
+								}
+							} else {
+								if (result == winIfOnCountObjective){
+									setTimeout(roll, delay);
+								} else {
+									switchState();
+									sound01.play();
+									setTimeout(youWin, delay);
+								}
 							}
 
 						}
@@ -351,7 +395,10 @@
 							randomChangeTo = Math.round(Math.random() * 2);
 							changeToBet = parseInt(4 + randomChangeTo);
 							changeCounter = changeToBet;
-							setTimeout(roll, delay);
+							randomMs = Math.round(Math.random() * 250);
+							delay = parseInt(randomMs);
+							changeCounter--;
+							countFunc();
 						}
 
 
@@ -411,7 +458,6 @@
 						$("#startScript").click(function(){
 							var payoutValue = parseFloat($("#payout").val()).toFixed(2);
 							$('#bets-history ul li:first-child a').tab('show');
-
 							if (payoutValue == parseFloat(2.00).toFixed(2)){
 								if (preventMessageShowed == false){
 									preventMessageShowed = true;
@@ -431,7 +477,8 @@
 							highCountObjective = parseInt($("#blocks").val());
 							minLoss = parseInt($("#minimumLose").val());
 							defaultBet = parseFloat($("#starterBet").val()).toFixed(8);
-							activeSearchRed = $("#checkStateBox").is(':checked');
+							activeSearchRed = $("#checkOneLose").is(':checked');
+							activeSearchGreen = $("#checkOneWin").is(':checked');
 						}
 
 						function settingsUnsave(){
@@ -439,7 +486,8 @@
 							setHighCountObjective =parseInt($("#blocks").val());
 							setMinLoss = parseInt($("#minimumLose").val());
 							setDefaultBet = parseFloat($("#starterBet").val()).toFixed(8);
-							setActiveSearchRed = $("#checkStateBox").is(':checked');
+							setActiveSearchRed = $("#checkOneLose").is(':checked');
+							setActiveSearchGreen = $("#checkOneWin").is(':checked');
 						}
 
 						$("#engine").click(function(){
@@ -457,12 +505,14 @@
 							$("#blocks").val(parseInt(setHighCountObjective));
 							$("#minimumLose").val(parseInt(setMinLoss));
 							$("#starterBet").val(parseFloat(setDefaultBet).toFixed(8));
-							$("#checkStateBox").prop('checked', setActiveSearchRed);
+							$("#checkOneLose").prop('checked', setActiveSearchRed);
+							$("#checkOneWin").prop('checked', setActiveSearchGreen);
 							countObjective = setCountObjective;
 							highCountObjective = setHighCountObjective;
 							minLoss = setMinLoss;
 							defaultBet = setDefaultBet;
 							activeSearchRed = setActiveSearchRed;
+							activeSearchGreen = setActiveSearchGreen;
 						});
 
 						$("#starterBet").on('input', setDecimals);
@@ -470,6 +520,28 @@
 						function setDecimals(){
 							$("#starterBet").val(parseFloat($("#starterBet").val()).toFixed(8));
 						}
+
+						$("#checkOneWin").click(function(){
+							if ($("#checkOneLose").prop('checked')) {
+						        $("#checkOneLose").prop('checked', false);
+						    }
+						});
+
+						$("#checkOneLose").click(function(){
+							if ($("#checkOneWin").prop('checked')) {
+						        $("#checkOneWin").prop('checked', false);
+						    }
+						});
+
+						$("#switcher").click(function(){
+							if(winIfOnCountObjective == false){
+								winIfOnCountObjective = true;
+								$("#winOrLoseChoseLabel").text("Buscador de victorias por bloque");
+							} else {
+								winIfOnCountObjective = false;
+								$("#winOrLoseChoseLabel").text("Buscador de derrotas por bloque");
+							}
+						});
 					  </textarea>
 					  <button class="nobtnclass" id="copyBitsler1">
 					  	<a href="#" data-toggle="popover" data-trigger="hover" data-content="Copiar"><i class="fas fa-clipboard fa-2x"></i></a>
